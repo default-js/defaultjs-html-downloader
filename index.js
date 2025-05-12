@@ -1,4 +1,4 @@
 
-import Element from "./src/HTMLDowloadElement.js";
+import Element from "./src/HTMLDowloaderElement.js";
 
-export const HTMLDownloadElement = Element;
+export const HTMLDownloaderElement = Element;

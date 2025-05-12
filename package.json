@@ -1,6 +1,6 @@
 {
-	"name": "@default-js/defaultjs-html-download",
-	"buildname": "defaultjs-html-download",
+	"name": "@default-js/defaultjs-html-downloader",
+	"buildname": "defaultjs-html-downloader",
 	"version": "1.0.0",
 	"description": "web component to handle download links for stateless backends.",
 	"main": "./index.js",
@@ -37,12 +37,12 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/default-js/defaultjs-html-download.git"
+		"url": "git+https://github.com/default-js/defaultjs-html-downloader.git"
 	},
 	"bugs": {
-		"url": "https://github.com/default-js/defaultjs-html-download/issues"
+		"url": "https://github.com/default-js/defaultjs-html-downloader/issues"
 	},
-	"homepage": "https://github.com/default-js/defaultjs-html-download#readme",
+	"homepage": "https://github.com/default-js/defaultjs-html-downloader#readme",
 	"dependencies": {
 		"@default-js/defaultjs-common-utils": "latest",
 		"@default-js/defaultjs-extdom": "latest",

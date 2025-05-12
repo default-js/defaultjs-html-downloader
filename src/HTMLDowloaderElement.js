@@ -4,7 +4,7 @@ import { getFilenameByHeader } from "./Utils.js";
 
 
 const DEFAULTFILENAME = "downloaded-file";
-const NODENAME = "d-download";
+const NODENAME = "d-downloader";
 
 const ATTRIBUTE__HREF = "href";
 const ATTRIBUTE__TEMPLATE = "template";
@@ -36,7 +36,7 @@ export const STATES = {
 	loading: STATE__LOADING,
 };
 
-class HTMLDownloadElement extends Component {
+class HTMLDownloaderElement extends Component {
 	static NODENAME = NODENAME;
 	static observedAttributes = ATTRIBUTES;
 	static STATES = STATES;
@@ -143,5 +143,5 @@ class HTMLDownloadElement extends Component {
 	}
 }
 
-define(HTMLDownloadElement);
-export default HTMLDownloadElement;
+define(HTMLDownloaderElement);
+export default HTMLDownloaderElement;
