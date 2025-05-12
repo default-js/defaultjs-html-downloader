@@ -47,7 +47,7 @@
 		"@default-js/defaultjs-common-utils": "latest",
 		"@default-js/defaultjs-extdom": "latest",
 		"@default-js/defaultjs-html-components": "latest",
-		"@default-js/defaultjs-template-language": "^1.7.14"
+		"@default-js/defaultjs-template-language": "latest"
 	},
 	"directories": {
 		"test": "test"
