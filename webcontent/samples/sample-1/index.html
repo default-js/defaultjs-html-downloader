@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Sample 1</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js' type="module" defer></script>
-</head>
-<body>
-    <d-downloader href="test-file.txt">test file</d-downloader>
-</body>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Sample 1</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+		<script src="main.js" type="module" defer></script>
+	</head>
+	<body style="display: flex; gap: 1rem; padding: 0.5rem 1rem; flex-direction: column;">
+		<d-downloader href="test-file.txt">test file</d-downloader>
+
+		<div style="display: flex; gap: 1rem; flex-direction: row">
+			<button id="by-function">Manual Download by Function</button>
+			<button id="by-event">Manual Download by Event</button>
+		</div>
+	</body>
 </html>

@@ -20,8 +20,11 @@ let DEFAULTTEMPLATE = Template.load(
 	false,
 );
 
-const EVENT__REQUEST_AUTH = `${NODENAME}--request--auth-handle`;
-const EVENT__RESPONSE_AUTH = `${NODENAME}--response--auth-handle`;
+const EVENT__ACTION__DOWNLOAD = `${NODENAME}--action--download`;
+const EVENT__EXECUTING__DOWNLOAD = `${NODENAME}--executing--download`;
+const EVENT__ACKNOWLEDGE__DOWNLOAD = `${NODENAME}--acknowledge--download`;
+const EVENT__REQUEST__AUTHENTICATION = `${NODENAME}--request--authentication`;
+const EVENT__RESPONSE__AUTHENTICATION = `${NODENAME}--response--authentication`;
 
 const STATE__READY = "ready";
 const STATE__LOADING = "loading";
@@ -41,8 +44,11 @@ class HTMLDownloaderElement extends Component {
 	static observedAttributes = ATTRIBUTES;
 	static STATES = STATES;
 
-	static EVENT__REQUEST_AUTH = EVENT__REQUEST_AUTH;
-	static EVENT__RESPONSE_AUTH = EVENT__RESPONSE_AUTH;
+	static EVENT__ACTION__DOWNLOAD = EVENT__ACTION__DOWNLOAD;
+	static EVENT__EXECUTING__DOWNLOAD = EVENT__EXECUTING__DOWNLOAD;
+	static EVENT__ACKNOWLEDGE__DOWNLOAD = EVENT__ACKNOWLEDGE__DOWNLOAD;
+	static EVENT__REQUEST__AUTHENTICATION = EVENT__REQUEST__AUTHENTICATION;
+	static EVENT__RESPONSE__AUTHENTICATION = EVENT__RESPONSE__AUTHENTICATION;
 
     /**
      * 
@@ -66,14 +72,14 @@ class HTMLDownloaderElement extends Component {
 	constructor() {
 		super();
 
-		this.on("click", (/** @type Event */ event) => {
+		this.on(["click", EVENT__ACTION__DOWNLOAD], (/** @type Event */ event) => {
 			event.preventDefault();
 			event.stopPropagation();
 			const state = this.#state;
 			if (state == STATE__READY) this.#download();
 		});
 
-		this.on(EVENT__RESPONSE_AUTH, (event) => {
+		this.on(EVENT__RESPONSE__AUTHENTICATION, (event) => {
 			event.preventDefault();
 			event.stopPropagation();
 			(async () => {
@@ -88,6 +94,7 @@ class HTMLDownloaderElement extends Component {
 
 				URL.revokeObjectURL(file);
 				this.#setState(STATE__READY);
+				this.trigger(EVENT__ACKNOWLEDGE__DOWNLOAD);
 				this.#render();
 			})();
 		});
@@ -105,10 +112,10 @@ class HTMLDownloaderElement extends Component {
 			else this.#template = Template.load(template);
 
 			if(!this.hasAttribute(ATTRIBUTE__USE_AUTH_HANDLE_EVENT)){
-                this.on(EVENT__REQUEST_AUTH, (event) => {
+                this.on(EVENT__REQUEST__AUTHENTICATION, (event) => {
                     event.preventDefault();
 			        event.stopPropagation();
-                    this.trigger(EVENT__RESPONSE_AUTH, event.detail);
+                    this.trigger(EVENT__RESPONSE__AUTHENTICATION, event.detail);
                 })
             }
 
@@ -121,11 +128,28 @@ class HTMLDownloaderElement extends Component {
 		this.attr(ATTRIBUTE__STATE, aState);
 	}
 
+	/**
+	 * 
+	 * @returns {Promise}
+	 */
+	download() {
+		return new Promise((resolve, reject) => {
+			const callback = (event) => {
+				this.removeOn(callback);
+				resolve();
+			};
+			
+			this.on(EVENT__ACKNOWLEDGE__DOWNLOAD, callback);
+			this.trigger(EVENT__ACTION__DOWNLOAD);
+		});
+	}
+
 	async #download() {
 		this.#setState(STATE__LOADING);
 		this.#render();
+		this.trigger(EVENT__EXECUTING__DOWNLOAD);
 		const request = new Request(new URL(this.#href, location));
-		this.trigger(EVENT__REQUEST_AUTH, request);
+		this.trigger(EVENT__REQUEST__AUTHENTICATION, request);
 	}
 
 	async #render() {
