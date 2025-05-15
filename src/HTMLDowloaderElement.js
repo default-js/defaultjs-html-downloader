@@ -55,7 +55,15 @@ class HTMLDownloaderElement extends Component {
      * @param {Template|String|URL} aTemplate 
      */
 	static defaultTemplate(aTemplate) {
-		DEFAULTTEMPLATE = aTemplate instanceof HTMLTemplateElement ? new Template(aTemplate) : Template.load(aTemplate);
+		DEFAULTTEMPLATE = (() => {
+			if(typeof aTemplate === "function")
+				return aTemplate();
+			if(aTemplate instanceof Promise)
+				return aTemplate;
+			if(aTemplate instanceof HTMLTemplateElement)
+				return new Template(aTemplate);
+			return Template.load(aTemplate);
+		})();
 	}
 
     /**@type {string} */
