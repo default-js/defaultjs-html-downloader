@@ -8,12 +8,28 @@
 		<link rel="stylesheet" type="text/css" media="screen" href="main.css" />
 		<script src="main.js" type="module" defer></script>
 	</head>
-	<body style="display: flex; gap: 1rem; padding: 0.5rem 1rem; flex-direction: column;">
-		<d-downloader href="test-file.txt">test file</d-downloader>
+	<body style="display: flex; gap: 1rem; padding: 0.5rem 1rem; flex-direction: column">
+		<div>
+			<d-downloader href="test-file.txt">test file</d-downloader>
 
-		<div style="display: flex; gap: 1rem; flex-direction: row">
-			<button id="by-function">Manual Download by Function</button>
-			<button id="by-event">Manual Download by Event</button>
+			<div style="display: flex; gap: 1rem; flex-direction: row">
+				<button id="by-function">Manual Download by Function</button>
+				<button id="by-event">Manual Download by Event</button>
+			</div>
+		</div>
+
+		<div>
+			<template id="template-1">
+				<a href="${href}" download="${filename}"></a>
+    			<span jstl-if="${state == 'loading'}">(loading wit custom HTML Template...)</span>
+			</template>
+
+			<d-downloader href="test-file.txt" template="#template-1">download by Custom HTML Template</d-downloader>
+		</div>
+
+		<div>
+
+			<d-downloader href="test-file.txt" template="/samples/sample-1/sample-template.tpl.html">download by Custom URL Template</d-downloader>
 		</div>
 	</body>
 </html>

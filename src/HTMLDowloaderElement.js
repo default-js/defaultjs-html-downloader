@@ -2,6 +2,8 @@ import { Component, componentBaseOf, define } from "@default-js/defaultjs-html-c
 import { Template, Renderer } from "@default-js/defaultjs-template-language/index.js";
 import { getFilenameByHeader } from "./Utils.js";
 
+const DOCUMENT = document;
+
 const DEFAULTFILENAME = "downloaded-file";
 const NODENAME = "d-downloader";
 
@@ -36,6 +38,24 @@ const STATE__LOADING = "loading";
 export const STATES = {
 	ready: STATE__READY,
 	loading: STATE__LOADING,
+};
+
+/**
+ *
+ * @param {HTMLElement} self
+ * @param {String} template
+ */
+const loadTemplate = async (self, template) => {
+	let result = null;
+	try {
+		result = self.querySelector(template);
+	} catch (e) {}
+	if (result == null)
+		try {
+			result = DOCUMENT.querySelector(template);
+		} catch (e) {}
+	if (result == null) return Template.load(new URL(template, location));
+	return Template.load(result);
 };
 
 class HTMLDownloaderElement extends Component {
@@ -114,7 +134,7 @@ class HTMLDownloaderElement extends Component {
 			this.#filename = this.attr(ATTRIBUTE__FILENAME) || DEFAULTFILENAME;
 			const template = (this.attr(ATTRIBUTE__TEMPLATE) || "").trim();
 			if (template.length == 0) this.#template = DEFAULTTEMPLATE;
-			else this.#template = Template.load(template);
+			else this.#template = loadTemplate(this, template);
 
 			if (!this.hasAttribute(ATTRIBUTE__USE_AUTH_HANDLE_EVENT)) {
 				this.on(EVENT__REQUEST__AUTHENTICATION, (event) => {
