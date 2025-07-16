@@ -2,7 +2,6 @@ import { Component, componentBaseOf, define } from "@default-js/defaultjs-html-c
 import { Template, Renderer } from "@default-js/defaultjs-template-language/index.js";
 import { getFilenameByHeader } from "./Utils.js";
 
-
 const DEFAULTFILENAME = "downloaded-file";
 const NODENAME = "d-downloader";
 
@@ -50,31 +49,28 @@ class HTMLDownloaderElement extends Component {
 	static EVENT__REQUEST__AUTHENTICATION = EVENT__REQUEST__AUTHENTICATION;
 	static EVENT__RESPONSE__AUTHENTICATION = EVENT__RESPONSE__AUTHENTICATION;
 
-    /**
-     * 
-     * @param {Template|String|URL} aTemplate 
-     */
+	/**
+	 *
+	 * @param {Template|String|URL} aTemplate
+	 */
 	static defaultTemplate(aTemplate) {
 		DEFAULTTEMPLATE = (() => {
-			if(typeof aTemplate === "function")
-				return aTemplate();
-			if(aTemplate instanceof Promise)
-				return aTemplate;
-			if(aTemplate instanceof HTMLTemplateElement)
-				return new Template(aTemplate);
+			if (typeof aTemplate === "function") return aTemplate();
+			if (aTemplate instanceof Promise) return aTemplate;
+			if (aTemplate instanceof HTMLTemplateElement) return new Template(aTemplate);
 			return Template.load(aTemplate);
 		})();
 	}
 
-    /**@type {string} */
+	/**@type {string} */
 	#state = STATE__READY;
-    /**@type {Promise<Template>} */
+	/**@type {Promise<Template>} */
 	#template = null;
-    /**@type {string} */
+	/**@type {string} */
 	#href = null;
-    /**@type {string} */
+	/**@type {string} */
 	#filename = null;
-    /**@type {Array<Node>} */
+	/**@type {Array<Node>} */
 	#content = null;
 
 	constructor() {
@@ -91,7 +87,8 @@ class HTMLDownloaderElement extends Component {
 			event.preventDefault();
 			event.stopPropagation();
 			(async () => {
-				const response = await fetch(event.detail);
+				const { url, request } = event.detail;
+				const response = await fetch(url, request);
 				this.#filename = getFilenameByHeader(response, this.#filename);
 				const blob = await response.blob();
 				const file = URL.createObjectURL(blob);
@@ -119,13 +116,13 @@ class HTMLDownloaderElement extends Component {
 			if (template.length == 0) this.#template = DEFAULTTEMPLATE;
 			else this.#template = Template.load(template);
 
-			if(!this.hasAttribute(ATTRIBUTE__USE_AUTH_HANDLE_EVENT)){
-                this.on(EVENT__REQUEST__AUTHENTICATION, (event) => {
-                    event.preventDefault();
-			        event.stopPropagation();
-                    this.trigger(EVENT__RESPONSE__AUTHENTICATION, event.detail);
-                })
-            }
+			if (!this.hasAttribute(ATTRIBUTE__USE_AUTH_HANDLE_EVENT)) {
+				this.on(EVENT__REQUEST__AUTHENTICATION, (event) => {
+					event.preventDefault();
+					event.stopPropagation();
+					this.trigger(EVENT__RESPONSE__AUTHENTICATION, event.detail);
+				});
+			}
 
 			this.#render();
 		}
@@ -137,7 +134,7 @@ class HTMLDownloaderElement extends Component {
 	}
 
 	/**
-	 * 
+	 *
 	 * @returns {Promise}
 	 */
 	download() {
@@ -146,7 +143,7 @@ class HTMLDownloaderElement extends Component {
 				this.removeOn(callback);
 				resolve();
 			};
-			
+
 			this.on(EVENT__ACKNOWLEDGE__DOWNLOAD, callback);
 			this.trigger(EVENT__ACTION__DOWNLOAD);
 		});
@@ -156,8 +153,9 @@ class HTMLDownloaderElement extends Component {
 		this.#setState(STATE__LOADING);
 		this.#render();
 		this.trigger(EVENT__EXECUTING__DOWNLOAD);
-		const request = new Request(new URL(this.#href, location));
-		this.trigger(EVENT__REQUEST__AUTHENTICATION, request);
+		const url = new URL(this.#href, location);
+		const request = { method: "get", headers: new Headers() };
+		this.trigger(EVENT__REQUEST__AUTHENTICATION, { url, request });
 	}
 
 	async #render() {
